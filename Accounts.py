@@ -4,16 +4,21 @@ class Account:
         self.costumer_id = costumer_id
         self.balance = balance
 
-    def get_balance(self):
-        return self.balance
-
     def withdraw(self, amount):
+        """
+        :param amount: the amount of money the costumer wants to withdraw
+        :return: raise exception if amount > balance
+        """
         if self.balance >= amount:
             self.balance = self.balance - amount
             return amount
         raise Exception('Your Balance is not enough')
 
     def deposit(self, amount):
+        """
+        add the amount to the balance
+        :param amount: the amount of money the costumer wants to deposit
+        """
         self.balance = self.balance + amount
 
     def __str__(self):
@@ -32,17 +37,29 @@ class CheckingAccount(Account):
         self.saving = []
 
     def get_commission(self):
+        """
+        every num of actions we take commission from the current balance
+        :return:  interest from the balance or 0 if not num_action % round
+        """
         if self.num_action % self.round == 0:
             return self.balance * self.interest
         return 0
 
     def withdraw(self, amount):
+        """
+        counts the num of actions, and call super.withdraw with the right commission
+        :param amount: the amount of money the costumer wants to withdraw
+        """
         self.num_action += 1
         commission = self.get_commission()
         amount += commission
         super().withdraw(amount)
 
     def deposit(self, amount):
+        """
+        counts the num of actions, and call super.deposit with the right commission
+        :param amount: the amount of money the costumer wants to deposit
+        """
         self.num_action += 1
         commission = self.get_commission()
         amount -= commission
