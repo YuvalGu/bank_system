@@ -1,16 +1,10 @@
-from random import random
-
+from AccountManger import AccountManager
 from Accounts import *
 from Costumer import Costumer
 
 
 class Bank:
     _instance = None
-
-    # def __init__(self, count=0):
-    #     self.costumers = {}
-    #     self.accounts = {}
-    #     self.count = count
 
     def __new__(self, count=0):
         if not self._instance:
@@ -75,56 +69,3 @@ class Bank:
 
     def deposit_to_saving_account(self, c_id, from_account_id, to_account_id, amount):
         self.accounts[c_id].deposit_to_saving_account(from_account_id, to_account_id, amount)
-
-
-class AccountManager:
-    def __init__(self):
-        self.saving_accounts = []
-        self.checking_accounts = []
-
-    def add_saving_account(self, account):
-        if len(self.checking_accounts) > 0:
-            self.saving_accounts.append(account)
-        else:
-            raise Exception(
-                f"Error adding account {account.account_id}. Can't have saving account with zero checking accounts.")
-
-    def close_saving_account(self, account_id):
-        for account in self.saving_accounts:
-            if account.account_id == account_id:
-                balance = account.balance
-                self.saving_accounts.remove(account)
-                return balance
-
-    def add_checking_account(self, account):
-        self.checking_accounts.append(account)
-
-    def close_checking_account(self, account_id):
-        if len(self.checking_accounts) == 1 and len(self.saving_accounts) > 0:
-            raise Exception(
-                f"Error closing account {account_id}. Can't have saving accounts with zero checking accounts.")
-        for account in self.checking_accounts:
-            if account == account_id:
-                balance = account.balance
-                self.checking_accounts.remove(account)
-                return balance
-
-    def withdraw(self, account_id, amount):
-        for account in (self.checking_accounts + self.saving_accounts):
-            if account.account_id == account_id:
-                account.withdraw(amount)
-                return
-        raise Exception(f"No such account with id {account_id}")
-
-    def deposit_to_saving_account(self, checking_account_id, saving_account_id, amount):
-        self.withdraw(checking_account_id, amount)
-        for account in self.saving_accounts:
-            if account.account_id == saving_account_id:
-                account.deposit(amount)
-                break
-
-    def deposit_to_checking_account(self, checking_account_id, amount):
-        for account in self.checking_accounts:
-            if account.account_id == checking_account_id:
-                account.deposit(amount)
-                break
