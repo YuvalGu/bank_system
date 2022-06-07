@@ -92,8 +92,9 @@ class AccountManager:
     def close_saving_account(self, account_id):
         for account in self.saving_accounts:
             if account.account_id == account_id:
+                balance = account.balance
                 self.saving_accounts.remove(account)
-                break
+                return balance
 
     def add_checking_account(self, account):
         self.checking_accounts.append(account)
@@ -104,8 +105,9 @@ class AccountManager:
                 f"Error closing account {account_id}. Can't have saving accounts with zero checking accounts.")
         for account in self.checking_accounts:
             if account == account_id:
+                balance = account.balance
                 self.checking_accounts.remove(account)
-                break
+                return balance
 
     def withdraw(self, account_id, amount):
         for account in (self.checking_accounts + self.saving_accounts):

@@ -2,6 +2,10 @@ from Bank import *
 
 
 def checking_account_query():
+    """
+    ask the type costumer and the monthly deposit
+    :return: account type
+    """
     print("Please answer")
     print("Are you:")
     ans = input("1. Private costumer\n2. Business costumer\n").strip()
@@ -20,6 +24,38 @@ def checking_account_query():
             return 'premium'
     else:
         raise ValueError(f"{ans} is a bad input. the options are 1 or 2.")
+
+
+def print_accounts_details(accounts):
+    """
+    :param accounts: list of accounts
+    """
+    if len(accounts) == 0:
+        print("There are no accounts")
+    else:
+        for count, account in enumerate(accounts, 1):
+            print(f"{count}) {account}")
+
+
+def choose_account_id(accounts, operation):
+    print_accounts_details(accounts)
+    if len(accounts) == 0:
+        return None
+    elif len(accounts) == 1:
+        account_id = accounts[0].account_id
+        ans = input(f"Would you like to {operation} account {account_id}? Y/N: ")
+        if ans.lower() == 'y':
+            return account_id
+        elif ans.lower() == 'n':
+            return None
+        else:
+            raise Exception(f"{ans} is a bad input. The options are Y or N.")
+    else:
+        index = int(input(f"Please choose a number between 1 to {len(accounts)}\n")) - 1
+        if 0 <= index < len(accounts):
+            return accounts[index].account_id
+        else:
+            raise Exception(f"{index} is a bad input.")
 
 
 class CRM:
@@ -109,7 +145,7 @@ class CRM:
                 self.add_saving_account()
             elif ans == '3':
                 accounts = self.bank.get_all_accounts(self.costumer.id)
-                self.print_accounts_details(accounts)
+                print_accounts_details(accounts)
             elif ans == '4':
                 self.close_account()
             elif ans == '5':
@@ -127,6 +163,7 @@ class CRM:
     def add_checking_account(self):
         """
         check the account type, and call the right function
+        if the costumer insert bad input in account query - prints the error message
         """
         try:
             account_type = checking_account_query()
@@ -199,14 +236,10 @@ class CRM:
             self.bank.add_saving_account(self.costumer.id)
             print("A saving account has been created")
 
-    def print_accounts_details(self, accounts):
-        if len(accounts) == 0:
-            print("There are no accounts")
-        else:
-            for count, account in enumerate(accounts, 1):
-                print(f"{count}) {account}")
-
     def close_account(self):
+        """
+        ask the type of account the costumer wants to close
+        """
         print("Would you like to close:")
         ans = input("1) Checking account\n2) Saving account\n")
         if ans == '1':
@@ -217,27 +250,37 @@ class CRM:
             print("Wrong Input! The options are 1 or 2")
 
     def close_checking_account(self):
+        """
+        close the chosen checking account and print the balance
+        if costumer inserts wrong input - print the error message
+        """
         try:
             accounts = self.bank.get_all_checking_accounts(self.costumer.id)
-            account_id = self.choose_account_id(accounts, "close")
+            account_id = choose_account_id(accounts, "close")
             if account_id is not None:
-                self.bank.close_checking_account(self.costumer.id, account_id)
+                balance = self.bank.close_checking_account(self.costumer.id, account_id)
+                print(f"Account {account_id} has been successfully closed, your balance is: {balance}")
         except Exception as e:
             print(e)
 
     def close_saving_account(self):
+        """
+        close the chosen saving account and print the balance
+        if costumer inserts wrong input - print the error message
+        """
         try:
             accounts = self.bank.get_all_saving_accounts(self.costumer.id)
-            account_id = self.choose_account_id(accounts, "close")
+            account_id = choose_account_id(accounts, "close")
             if account_id is not None:
-                self.bank.close_saving_account(self.costumer.id, account_id)
+                balance = self.bank.close_saving_account(self.costumer.id, account_id)
+                print(f"Account {account_id} has been successfully closed, your balance is: {balance}")
         except Exception as e:
             print(e)
 
     def withdraw(self):
         try:
             accounts = self.bank.get_all_checking_accounts(self.costumer.id)
-            account_id = self.choose_account_id(accounts, "withdraw from")
+            account_id = choose_account_id(accounts, "withdraw from")
             if account_id is not None:
                 amount = input("Input the amount of money you want to withdraw: ")
                 if amount.isdigit():
@@ -260,7 +303,7 @@ class CRM:
     def deposit_checking_account(self):
         try:
             accounts = self.bank.get_all_checking_accounts(self.costumer.id)
-            account_id = self.choose_account_id(accounts, "deposit to")
+            account_id = choose_account_id(accounts, "deposit to")
             if account_id is not None:
                 amount = input("Input the amount of money you want to deposit: ")
                 if amount.isdigit():
@@ -274,12 +317,12 @@ class CRM:
         try:
             print("Deposit from:")
             checking_accounts = self.bank.get_all_checking_accounts(self.costumer.id)
-            from_account_id = self.choose_account_id(checking_accounts, "deposit from")
+            from_account_id = choose_account_id(checking_accounts, "deposit from")
             if from_account_id is None:
                 return
             print("Deposit To:")
             saving_accounts = self.bank.get_all_saving_accounts(self.costumer.id)
-            to_account_id = self.choose_account_id(saving_accounts, "deposit to")
+            to_account_id = choose_account_id(saving_accounts, "deposit to")
             if to_account_id:
                 amount = input("Input the amount of money you want to deposit: ")
                 if amount.isdigit():
@@ -288,23 +331,3 @@ class CRM:
                     print(f"{amount} is not a non-negative number.")
         except Exception as e:
             print(e)
-
-    def choose_account_id(self, accounts, operation):
-        self.print_accounts_details(accounts)
-        if len(accounts) == 0:
-            return None
-        elif len(accounts) == 1:
-            account_id = accounts[0].account_id
-            ans = input(f"Would you like to {operation} account {account_id}? Y/N: ")
-            if ans.lower() == 'y':
-                return account_id
-            elif ans.lower() == 'n':
-                return None
-            else:
-                raise Exception(f"{ans} is a bad input. The options are Y or N.")
-        else:
-            index = int(input(f"Please choose a number between 1 to {len(accounts)}\n")) - 1
-            if 0 <= index < len(accounts):
-                return accounts[index].account_id
-            else:
-                raise Exception(f"{index} is a bad input.")
