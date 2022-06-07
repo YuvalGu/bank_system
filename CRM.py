@@ -55,7 +55,7 @@ def choose_account_id(accounts, operation):
         if 0 <= index < len(accounts):
             return accounts[index].account_id
         else:
-            raise Exception(f"{index} is a bad input.")
+            raise Exception(f"{index+1} is a bad input.")
 
 
 class CRM:
@@ -278,6 +278,10 @@ class CRM:
             print(e)
 
     def withdraw(self):
+        """
+        withdraw from the chosen account
+        if not possible or costumer inserts wrong input print message error
+        """
         try:
             accounts = self.bank.get_all_checking_accounts(self.costumer.id)
             account_id = choose_account_id(accounts, "withdraw from")
@@ -291,6 +295,9 @@ class CRM:
             print(e)
 
     def deposit(self):
+        """
+        ask the type of account the costumer wants to deposit
+        """
         print("Would you like to deposit to:")
         ans = input("1) Checking account\n2) Saving account\n")
         if ans == '1':
@@ -301,6 +308,10 @@ class CRM:
             print("Wrong Input! The options are 1 or 2")
 
     def deposit_checking_account(self):
+        """
+        deposit the chosen checking account and print the balance
+        if costumer inserts wrong input - print the error message
+        """
         try:
             accounts = self.bank.get_all_checking_accounts(self.costumer.id)
             account_id = choose_account_id(accounts, "deposit to")
