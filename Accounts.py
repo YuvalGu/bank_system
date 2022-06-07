@@ -34,7 +34,6 @@ class CheckingAccount(Account):
         self.num_action = 0
         self.round = round
         self.interest = interest
-        self.saving = []
 
     def get_commission(self):
         """
