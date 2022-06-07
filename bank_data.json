@@ -1,0 +1,34 @@
+{
+    "0": {
+        "costumer": {
+            "id": "31832",
+            "name": "sapir",
+            "password": "abc"
+        },
+        "accounts": {}
+    },
+    "1": {
+        "costumer": {
+            "id": "222",
+            "name": "yuval",
+            "password": "two"
+        },
+        "accounts": {
+            "0": {
+                "type": "private",
+                "account id": 0,
+                "balance": 1000
+            },
+            "1": {
+                "type": "premium",
+                "account id": 1,
+                "balance": 5000000
+            },
+            "2": {
+                "type": "saving",
+                "account id": 2,
+                "balance": 0
+            }
+        }
+    }
+}
