@@ -56,6 +56,10 @@ class BankDB:
             self.write(Bank())
 
     def read(self):
+        """
+        read the file from the path
+        :return: data dictionary. if there is error reading/loading the file - return empty dict
+        """
         with open(self.path, "r") as file:
             try:
                 data = json.loads(file.read())
@@ -64,10 +68,18 @@ class BankDB:
                 return {}
 
     def create_bank(self):
+        """
+        read the file and convert to bank object
+        :return:
+        """
         data = self.read()
         return convert_to_bank(data)
 
     def write(self, bank):
+        """
+        convert the bank to dictionary and write to a file
+        :param bank: bank object
+        """
         j_object = convert_to_dict(bank)
         with open(self.path, "w") as file:
             json.dump(j_object, file, indent=4)
