@@ -1,6 +1,27 @@
 from Bank import *
 
 
+def checking_account_query():
+    print("Please answer")
+    print("Are you:")
+    ans = input("1. Private costumer\n2. Business costumer\n").strip()
+    if ans == '1':
+        return 'private'
+    elif ans == '2':
+        ans = input("Please enter your monthly deposit: ").strip()
+        if not ans.isdigit():
+            raise ValueError(f"{ans} is not a non-negative number.")
+        ans = int(ans)
+        if ans <= 25000:
+            return 'private'
+        elif 25000 < ans <= 100000:
+            return 'business'
+        elif ans > 100000:
+            return 'premium'
+    else:
+        raise ValueError(f"{ans} is a bad input. the options are 1 or 2.")
+
+
 class CRM:
     def __init__(self, bank: Bank):
         self.bank = bank
@@ -39,7 +60,7 @@ class CRM:
         user_id = input("Enter your id: ").strip()
         # Check if costumer already exist
         if self.bank.costumer_exist(user_id):
-            print("Costumer already exists. Please login")
+            print("Costumer already exists. Please login or sign up with different id")
             self.start()
         else:
             password = input("Choose your password: ").strip()
@@ -69,6 +90,9 @@ class CRM:
                 self.start()
 
     def costumer_menu(self):
+        """
+        menu of all costumer options
+        """
         while True:
             print(f"\nHello {self.costumer.name}, please choose one of the following options:")
             print("1) Add checking account")
@@ -101,8 +125,11 @@ class CRM:
                 print("Wrong Input! Please try again")
 
     def add_checking_account(self):
+        """
+        check the account type, and call the right function
+        """
         try:
-            account_type = self.checking_account_query()
+            account_type = checking_account_query()
             if account_type == 'private':
                 self.add_private_account()
             elif account_type == 'business':
@@ -112,27 +139,12 @@ class CRM:
         except ValueError as e:
             print(e)
 
-    def checking_account_query(self):
-        print("Please answer")
-        print("Are you:")
-        ans = input("1. Private costumer\n2. Business costumer\n").strip()
-        if ans == '1':
-            return 'private'
-        elif ans == '2':
-            ans = input("Please enter your monthly deposit: ").strip()
-            if not ans.isdigit():
-                raise ValueError(f"{ans} is not a non-negative number.")
-            ans = int(ans)
-            if ans <= 25000:
-                return 'private'
-            elif 25000 < ans <= 100000:
-                return 'business'
-            elif ans > 100000:
-                return 'premium'
-        else:
-            raise ValueError(f"{ans} is a bad input. the options are 1 or 2.")
-
     def add_private_account(self):
+        """
+        tells the costumer the account details (interest of x actions)
+        if costumer is interesting - call the bank to create private account
+        if costumer not interesting or insert bad input - return without calling the bank
+        """
         ans = input(
             "You are eligible for a private account with 5% interest every 5 actions.\nInterested? Y/N ").strip()
         if ans.lower() == 'y':
@@ -144,6 +156,11 @@ class CRM:
             print(f"{ans} is a bad input. the options are Y or N.")
 
     def add_business_account(self):
+        """
+        tells the costumer the account details (interest of x actions)
+        if costumer is interesting - call the bank to create business account
+        if costumer not interesting or insert bad input - return without calling the bank
+        """
         ans = input(
             "You are eligible for a business account with 5% interest every 10 actions.\nInterested? Y/N ").strip()
         if ans.lower() == 'y':
@@ -155,6 +172,11 @@ class CRM:
             print(f"{ans} is a bad input. the options are Y or N.")
 
     def add_premium_account(self):
+        """
+        tells the costumer the account details (interest of x actions)
+        if costumer is interesting - call the bank to create premium account
+        if costumer not interesting or insert bad input - return without calling the bank
+        """
         ans = input(
             "You are eligible for a premium account with 2.5% interest every 10 actions.\nInterested? Y/N ").strip()
         if ans.lower() == 'y':
@@ -166,6 +188,10 @@ class CRM:
             print(f"{ans} is a bad input. the options are Y or N.")
 
     def add_saving_account(self):
+        """
+        check if there checking account, if not - not possible to create saving account
+        if there is at least one checking account - call the bank to add saving account
+        """
         checking_accounts = self.bank.get_all_checking_accounts(self.costumer.id)
         if len(checking_accounts) == 0:
             print("There are no checking account, please add checking account first")
@@ -194,7 +220,7 @@ class CRM:
         try:
             accounts = self.bank.get_all_checking_accounts(self.costumer.id)
             account_id = self.choose_account_id(accounts, "close")
-            if account_id:
+            if account_id is not None:
                 self.bank.close_checking_account(self.costumer.id, account_id)
         except Exception as e:
             print(e)
@@ -203,7 +229,7 @@ class CRM:
         try:
             accounts = self.bank.get_all_saving_accounts(self.costumer.id)
             account_id = self.choose_account_id(accounts, "close")
-            if account_id:
+            if account_id is not None:
                 self.bank.close_saving_account(self.costumer.id, account_id)
         except Exception as e:
             print(e)
@@ -212,7 +238,7 @@ class CRM:
         try:
             accounts = self.bank.get_all_checking_accounts(self.costumer.id)
             account_id = self.choose_account_id(accounts, "withdraw from")
-            if account_id:
+            if account_id is not None:
                 amount = input("Input the amount of money you want to withdraw: ")
                 if amount.isdigit():
                     self.bank.withdraw(self.costumer.id, account_id, int(amount))
