@@ -309,7 +309,7 @@ class CRM:
 
     def deposit_checking_account(self):
         """
-        deposit the chosen checking account and print the balance
+        deposit the chosen checking account and ask the amount he wants to deposit
         if costumer inserts wrong input - print the error message
         """
         try:
@@ -325,6 +325,11 @@ class CRM:
             print(e)
 
     def deposit_saving_account(self):
+        """
+        deposit from the chosen checking account to saving account and ask the amount he wants to deposit
+        if costumer inserts wrong input - print the error message
+        if not possible -  print error message
+        """
         try:
             print("Deposit from:")
             checking_accounts = self.bank.get_all_checking_accounts(self.costumer.id)
@@ -334,7 +339,7 @@ class CRM:
             print("Deposit To:")
             saving_accounts = self.bank.get_all_saving_accounts(self.costumer.id)
             to_account_id = choose_account_id(saving_accounts, "deposit to")
-            if to_account_id:
+            if to_account_id is not None:
                 amount = input("Input the amount of money you want to deposit: ")
                 if amount.isdigit():
                     self.bank.deposit_to_saving_account(self.costumer.id, from_account_id, to_account_id, int(amount))
